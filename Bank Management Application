@@ -1,0 +1,150 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+class BankAccount
+{
+public:
+    int accountNumber;
+    string name;
+    double balance;
+
+    void createAccount()
+    {
+        cout << "Enter Account Number: ";
+        cin >> accountNumber;
+
+        cin.ignore();
+
+        cout << "Enter Account Holder Name: ";
+        getline(cin, name);
+
+        cout << "Enter Initial Balance: ";
+        cin >> balance;
+    }
+
+    void displayAccount()
+    {
+        cout << "\nAccount Number : " << accountNumber << endl;
+        cout << "Name           : " << name << endl;
+        cout << "Balance        : " << balance << endl;
+    }
+};
+
+void createAccount()
+{
+    BankAccount acc;
+
+    acc.createAccount();
+
+    ofstream file("accounts.txt", ios::app);
+
+    file << acc.accountNumber << endl;
+    file << acc.name << endl;
+    file << acc.balance << endl;
+
+    file.close();
+
+    cout << "\nAccount Created Successfully!\n";
+}
+
+void displayAllAccounts()
+{
+    ifstream file("accounts.txt");
+
+    if (!file)
+    {
+        cout << "\nNo Records Found!\n";
+        return;
+    }
+
+    BankAccount acc;
+
+    while (file >> acc.accountNumber)
+    {
+        file.ignore();
+        getline(file, acc.name);
+        file >> acc.balance;
+
+        acc.displayAccount();
+    }
+
+    file.close();
+}
+
+void checkBalance()
+{
+    int searchAcc;
+    bool found = false;
+
+    cout << "Enter Account Number: ";
+    cin >> searchAcc;
+
+    ifstream file("accounts.txt");
+
+    BankAccount acc;
+
+    while (file >> acc.accountNumber)
+    {
+        file.ignore();
+        getline(file, acc.name);
+        file >> acc.balance;
+
+        if (acc.accountNumber == searchAcc)
+        {
+            cout << "\nCurrent Balance: " << acc.balance << endl;
+            found = true;
+            break;
+        }
+    }
+
+    if (!found)
+    {
+        cout << "\nAccount Not Found!\n";
+    }
+
+    file.close();
+}
+
+int main()
+{
+    int choice;
+
+    do
+    {
+        cout << "\n========== BANK MANAGEMENT SYSTEM ==========\n";
+        cout << "1. Create Account\n";
+        cout << "2. Display All Accounts\n";
+        cout << "3. Check Balance\n";
+        cout << "4. Exit\n";
+        cout << "Enter Choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            createAccount();
+            break;
+
+        case 2:
+            displayAllAccounts();
+            break;
+
+        case 3:
+            checkBalance();
+            break;
+
+        case 4:
+            cout << "\nThank You!\n";
+            break;
+
+        default:
+            cout << "\nInvalid Choice!\n";
+        }
+
+    } while (choice != 4);
+
+    return 0;
+}
